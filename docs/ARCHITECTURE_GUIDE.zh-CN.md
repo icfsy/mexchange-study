@@ -1026,3 +1026,14 @@ CI（`.github/workflows/ci.yml`）：对 `matching_engine` 和 `accounts` 跑 `c
 | 客户端侧增量处理 | `frontend/src/hooks/useWebSocket.ts`、`workers/marketDataWorker.ts` |
 | 已知限制 | `README.md:101-113` |
 | CI 期望 | `.github/workflows/ci.yml` |
+
+---
+
+## 相关文档
+
+- [`ARCHITECTURE_GUIDE.md`](ARCHITECTURE_GUIDE.md) —— 本文的英文版
+- [`EXCHANGE_DOMAIN_NOTES.md`](EXCHANGE_DOMAIN_NOTES.md) —— 这套设计背后的**行业业务知识**：
+  撮合与分配算法（FIFO vs Pro-Rata）、订单类型与 TIF、自成交防护、金额精度与记账、
+  可审计与合规、交易前风控、行情与订单流为什么分两条通道、FIX、清算与结算
+- [`ARCHITECTURE_V2.md`](ARCHITECTURE_V2.md) —— **v2 目标架构**（事件日志、风控网关、FIX 网关、
+  异步结算、行情缺口恢复），并逐条对应第七部分列出的问题

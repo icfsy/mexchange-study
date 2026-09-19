@@ -1086,3 +1086,15 @@ Answer these without looking. If you can do all sixteen, you understand the arch
 | Client-side delta handling | `frontend/src/hooks/useWebSocket.ts`, `workers/marketDataWorker.ts` |
 | Known limitations | `README.md:101-113` |
 | CI expectations | `.github/workflows/ci.yml` |
+
+---
+
+## Related documents
+
+- [`ARCHITECTURE_GUIDE.zh-CN.md`](ARCHITECTURE_GUIDE.zh-CN.md) — this guide in Chinese
+- [`EXCHANGE_DOMAIN_NOTES.md`](EXCHANGE_DOMAIN_NOTES.md) — the industry/business background behind the design:
+  matching algorithms (FIFO vs pro-rata), order types and TIF, self-trade prevention, decimal vs integer money,
+  audit and regulatory requirements, pre-trade risk, why market data and order flow use different transports,
+  FIX, and clearing vs settlement
+- [`ARCHITECTURE_V2.md`](ARCHITECTURE_V2.md) — the target architecture (event log, risk gateway, FIX gateway,
+  async settlement, market data recovery) mapped against the verified problems listed in Part 7
