@@ -1,0 +1,16 @@
+{
+  "name": "01 挂单后被吃 —— 成交价取挂单方价格",
+  "description": "Alice 挂买单 100.50；Bob 用限价 100.00 的卖单去吃。成交价是 100.50（挂单方的价格），Bob 得到价格改善。",
+  "symbol": "KCN/EUR",
+  "fee_bps": 10,
+  "accounts": {
+    "alice": { "EUR": "10000" },
+    "bob": { "KCN": "10" }
+  },
+  "steps": [
+    { "op": "place", "account": "alice", "side": "bid", "order_type": "limit", "price": "100.50", "quantity": "10", "as": "alice_bid" },
+    { "op": "note", "text": "↑ 未成交，挂在 100.50（状态 = open）" },
+    { "op": "place", "account": "bob", "side": "ask", "order_type": "limit", "price": "100.00", "quantity": "10" },
+    { "op": "note", "text": "↑ 注意上一个步骤：Fill 事件是在结算之后才发布的" }
+  ]
+}

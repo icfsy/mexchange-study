@@ -1,0 +1,25 @@
+{
+  "name": "05 余额不足被拒（盘前风控）",
+  "description": "风控必须在订单到达撮合引擎之前完成。这里 Alice 只有 100 EUR，却想下 10 个 100.00 的买单。",
+  "symbol": "KCN/EUR",
+  "fee_bps": 10,
+  "accounts": {
+    "alice": {
+      "EUR": "100"
+    }
+  },
+  "steps": [
+    {
+      "op": "place",
+      "account": "alice",
+      "side": "bid",
+      "order_type": "limit",
+      "price": "100.00",
+      "quantity": "10"
+    },
+    {
+      "op": "note",
+      "text": "↑ 需要约 1001 EUR，可用 100 EUR → 下单被拒，订单簿完全没被触碰"
+    }
+  ]
+}

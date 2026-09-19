@@ -1,0 +1,71 @@
+{
+  "name": "06 TIF 与 Post-Only：IOC / FOK / 只做挂单",
+  "description": "TIF 不是参数差异，而是撮合语义差异：FOK 要求先预演能否全额成交，IOC 成交后不挂剩余。",
+  "symbol": "KCN/EUR",
+  "fee_bps": 10,
+  "accounts": {
+    "alice": {
+      "EUR": "10000"
+    },
+    "bob": {
+      "KCN": "20"
+    },
+    "carol": {
+      "KCN": "5"
+    }
+  },
+  "steps": [
+    {
+      "op": "place",
+      "account": "alice",
+      "side": "bid",
+      "order_type": "limit",
+      "price": "100.00",
+      "quantity": "5",
+      "as": "a1"
+    },
+    {
+      "op": "note",
+      "text": "↑ 簿上现在有 5 个可成交的买单，作为后面的流动性"
+    },
+    {
+      "op": "place",
+      "account": "carol",
+      "side": "ask",
+      "order_type": "limit",
+      "price": "99.00",
+      "quantity": "2",
+      "post_only": true
+    },
+    {
+      "op": "note",
+      "text": "↑ Post-Only：会立即成交 → 在撮合之前就拒绝"
+    },
+    {
+      "op": "place",
+      "account": "bob",
+      "side": "ask",
+      "order_type": "limit",
+      "price": "99.00",
+      "quantity": "10",
+      "tif": "fok"
+    },
+    {
+      "op": "note",
+      "text": "↑ FOK：可成交 5 < 10 → 全额拒绝，订单簿一点没变"
+    },
+    {
+      "op": "place",
+      "account": "bob",
+      "side": "ask",
+      "order_type": "limit",
+      "price": "99.00",
+      "quantity": "8",
+      "tif": "ioc"
+    },
+    {
+      "op": "note",
+      "text": "↑ IOC：成交 5 个，剩余 3 个不挂单、直接撤销"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "04 撤单释放预留资金",
+  "description": "下单会冻结（预留）资金；撤单把未成交部分的预留释放回去。这正是 v1 用一条负的 lock 流水来近似的事情。",
+  "symbol": "KCN/EUR",
+  "fee_bps": 10,
+  "accounts": {
+    "alice": { "EUR": "10000" }
+  },
+  "steps": [
+    { "op": "place", "account": "alice", "side": "bid", "order_type": "limit", "price": "100.00", "quantity": "5", "as": "a1" },
+    { "op": "note", "text": "↑ 预留 ≈ 500.50 EUR（成交金额 + 手续费），可用余额下降" },
+    { "op": "state" },
+    { "op": "cancel", "order": "a1" },
+    { "op": "note", "text": "↑ 预留全部释放，可用余额恢复 —— 但余额本身从没变过" }
+  ]
+}

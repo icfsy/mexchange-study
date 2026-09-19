@@ -1,0 +1,16 @@
+{
+  "name": "07 自成交：引擎不阻止（缺少 STP）",
+  "description": "同一个账户的买单和卖单互相成交。真实交易所会用 STP 阻止；而 v1 的 Fill 只有订单 ID、没有账户，结构上做不到。",
+  "symbol": "KCN/EUR",
+  "fee_bps": 10,
+  "accounts": {
+    "alice": { "EUR": "10000", "KCN": "10" }
+  },
+  "steps": [
+    { "op": "place", "account": "alice", "side": "bid", "order_type": "limit", "price": "100.00", "quantity": "5", "as": "a1" },
+    { "op": "place", "account": "alice", "side": "ask", "order_type": "limit", "price": "100.00", "quantity": "5" },
+    { "op": "note", "text": "↑ 自成交发生了：制造了 5 个的虚假成交量，被收了两次手续费，KCN 净变化为 0" },
+    { "op": "note", "text": "↑ 去看下面的余额：Alice 的 EUR 只少了手续费，其余是左手倒右手" },
+    { "op": "state" }
+  ]
+}

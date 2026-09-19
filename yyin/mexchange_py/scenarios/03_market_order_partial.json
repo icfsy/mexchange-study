@@ -1,0 +1,16 @@
+{
+  "name": "03 市价单部分成交 → 剩余被撤销",
+  "description": "市价单从不挂单。Bob 想卖 10 个，但簿上只有 4 个可成交；剩下 6 个被丢弃，并通知账户服务释放预留。",
+  "symbol": "KCN/EUR",
+  "fee_bps": 10,
+  "accounts": {
+    "alice": { "EUR": "10000" },
+    "bob": { "KCN": "10" }
+  },
+  "steps": [
+    { "op": "place", "account": "alice", "side": "bid", "order_type": "limit", "price": "100.00", "quantity": "4", "as": "a1" },
+    { "op": "place", "account": "bob", "side": "ask", "order_type": "market", "quantity": "10" },
+    { "op": "note", "text": "↑ 只有 4 个可成交：成交 4 个，剩余 6 个被撤销并释放预留" },
+    { "op": "state" }
+  ]
+}

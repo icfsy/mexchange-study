@@ -1,0 +1,19 @@
+{
+  "name": "02 部分成交与挂单",
+  "description": "Bob 的卖单只被吃掉一部分，剩下一部分继续挂着；随后 Carol 用买单来吃它。两次都体现了挂单方定价。",
+  "symbol": "KCN/EUR",
+  "fee_bps": 10,
+  "accounts": {
+    "alice": { "EUR": "10000" },
+    "bob": { "KCN": "20" },
+    "carol": { "EUR": "5000", "KCN": "5" }
+  },
+  "steps": [
+    { "op": "place", "account": "alice", "side": "bid", "order_type": "limit", "price": "100.00", "quantity": "5", "as": "a1" },
+    { "op": "place", "account": "bob", "side": "ask", "order_type": "limit", "price": "100.00", "quantity": "12", "as": "b1" },
+    { "op": "note", "text": "↑ Bob 吃掉 Alice 的 5 个后，剩余 7 个挂在 100.00（状态 = partially_filled）" },
+    { "op": "book" },
+    { "op": "place", "account": "carol", "side": "bid", "order_type": "limit", "price": "100.50", "quantity": "3" },
+    { "op": "note", "text": "↑ Carol 出价 100.50，却以 100.00 成交 —— 挂单方定价，Carol 反而得到价格改善" }
+  ]
+}
