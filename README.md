@@ -1,5 +1,25 @@
 # mExchange
 
+> ### ⚠️ About this repository
+>
+> This is a **derivative study repository**, not the original project.
+> The original **mExchange** was created by **Kevin Karsopawiro** and lives at
+> **[github.com/afterburn/mExchange](https://github.com/afterburn/mExchange)**.
+> All Rust services, the frontend, and the e2e tests here are his work; 40 of the 43 commits
+> at the time of writing are his. He does not maintain or endorse this repository.
+>
+> What I added lives under **[`yyin/`](yyin)**:
+>
+> - `yyin/docs/` — an architecture guide to this codebase (EN + zh-CN), industry/domain notes on
+>   how exchanges work (matching algorithms, order types and TIF, self-trade prevention, ledger
+>   design, pre-trade risk, market data transport, FIX, clearing vs settlement), and a v2 target
+>   architecture derived from problems verified in the current code.
+> - `yyin/mexchange_py/` — a Python reference model of the **business logic** (7 runnable
+>   scenarios, 19 tests), built to make the rules readable without the Rust.
+>
+> See [`NOTICE.md`](NOTICE.md) for the full attribution, and [`LICENSE`](LICENSE) (MIT, preserving
+> the original author's copyright).
+
 A modular, high-performance cryptocurrency exchange platform built with Rust.
 
 > **Work in Progress**: This project is under active development. The current implementation works but the architecture is evolving toward the target design described below.
