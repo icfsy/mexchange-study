@@ -13,9 +13,9 @@ from __future__ import annotations
 import unittest
 from decimal import Decimal
 
-from meexchange.accounts import AccountsService, InsufficientFunds, MarketMeta
-from meexchange.book import OrderBook
-from meexchange.domain import (
+from mexchange.accounts import AccountsService, InsufficientFunds, MarketMeta
+from mexchange.book import OrderBook
+from mexchange.domain import (
     Order,
     OrderStatus,
     OrderType,
@@ -23,8 +23,8 @@ from meexchange.domain import (
     TimeInForce,
     new_id,
 )
-from meexchange.ledger import ZERO, AccountKind, Ledger
-from meexchange.venue import Venue
+from mexchange.ledger import ZERO, AccountKind, Ledger
+from mexchange.venue import Venue
 
 D = Decimal
 
@@ -190,8 +190,12 @@ class LedgerRules(unittest.TestCase):
         accounts.deposit("alice", "EUR", D("10000"), ts=1)
         accounts.deposit("bob", "KCN", D("10"), ts=2)
 
-        venue.place_order("alice", Side.BID, OrderType.LIMIT, D("10"), ts=3, price=D("100.50"))
-        venue.place_order("bob", Side.ASK, OrderType.LIMIT, D("10"), ts=4, price=D("100.00"))
+        venue.place_order(
+            "alice", Side.BID, OrderType.LIMIT, D("10"), ts=3, price=D("100.50")
+        )
+        venue.place_order(
+            "bob", Side.ASK, OrderType.LIMIT, D("10"), ts=4, price=D("100.00")
+        )
 
         self.assertTrue(ledger.is_conserved(), "任何成交之后账目都必须守恒")
         # 成交价取挂单方 100.50，名义额 1005.00，双边各收 0.1%
@@ -203,7 +207,9 @@ class LedgerRules(unittest.TestCase):
         ledger, accounts, _book, venue = self._fixture()
         accounts.deposit("alice", "EUR", D("10000"), ts=1)
         accounts.deposit("bob", "KCN", D("10"), ts=2)
-        venue.place_order("alice", Side.BID, OrderType.LIMIT, D("5"), ts=3, price=D("100"))
+        venue.place_order(
+            "alice", Side.BID, OrderType.LIMIT, D("5"), ts=3, price=D("100")
+        )
         _order, fills = venue.place_order(
             "bob", Side.ASK, OrderType.LIMIT, D("5"), ts=4, price=D("100")
         )
@@ -236,7 +242,9 @@ class ReservationRules(unittest.TestCase):
         _ledger, accounts, venue = self._fixture()
         accounts.deposit("alice", "EUR", D("100"), ts=1)
         with self.assertRaises(InsufficientFunds):
-            venue.place_order("alice", Side.BID, OrderType.LIMIT, D("10"), ts=2, price=D("100"))
+            venue.place_order(
+                "alice", Side.BID, OrderType.LIMIT, D("10"), ts=2, price=D("100")
+            )
         self.assertEqual(venue.book.resting_order_count, 0, "被拒订单不得进入订单簿")
         self.assertEqual(accounts.reserved_amount("alice", "EUR"), ZERO)
 
@@ -260,9 +268,15 @@ class ReservationRules(unittest.TestCase):
         ledger, accounts, venue = self._fixture()
         accounts.deposit("alice", "EUR", D("10000"), ts=1)
         accounts.deposit("bob", "KCN", D("10"), ts=2)
-        venue.place_order("alice", Side.BID, OrderType.LIMIT, D("4"), ts=3, price=D("100"))
-        bob_order, _ = venue.place_order("bob", Side.ASK, OrderType.MARKET, D("10"), ts=4)
-        self.assertEqual(accounts.reserved_amount("bob", "KCN"), ZERO, "未成交部分必须释放")
+        venue.place_order(
+            "alice", Side.BID, OrderType.LIMIT, D("4"), ts=3, price=D("100")
+        )
+        bob_order, _ = venue.place_order(
+            "bob", Side.ASK, OrderType.MARKET, D("10"), ts=4
+        )
+        self.assertEqual(
+            accounts.reserved_amount("bob", "KCN"), ZERO, "未成交部分必须释放"
+        )
         # 注意：filled_quantity_of 以 order_id 为键，不是账户
         self.assertEqual(accounts.filled_quantity_of(bob_order.order_id), D("4"))
 
@@ -281,7 +295,9 @@ class KnownGaps(unittest.TestCase):
         accounts.deposit("alice", "EUR", D("10000"), ts=1)
         accounts.deposit("alice", "KCN", D("10"), ts=2)
 
-        venue.place_order("alice", Side.BID, OrderType.LIMIT, D("5"), ts=3, price=D("100"))
+        venue.place_order(
+            "alice", Side.BID, OrderType.LIMIT, D("5"), ts=3, price=D("100")
+        )
         _order, fills = venue.place_order(
             "alice", Side.ASK, OrderType.LIMIT, D("5"), ts=4, price=D("100")
         )

@@ -1,4 +1,4 @@
-# meexchange_py —— mExchange 业务逻辑的 Python 参考模型
+# mexchange_py —— mExchange 业务逻辑的 Python 参考模型
 
 ## 这是什么
 

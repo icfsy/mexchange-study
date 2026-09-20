@@ -26,15 +26,15 @@ _HERE = Path(__file__).resolve().parent
 if str(_HERE) not in sys.path:
     sys.path.insert(0, str(_HERE))
 
-from meexchange.accounts import (  # noqa: E402
+from mexchange.accounts import (  # noqa: E402
     AccountsService,
     InsufficientFunds,
     MarketMeta,
 )
-from meexchange.book import OrderBook  # noqa: E402
-from meexchange.domain import OrderType, Side, TimeInForce  # noqa: E402
-from meexchange.ledger import AccountKind, Ledger, fmt  # noqa: E402
-from meexchange.venue import Venue  # noqa: E402
+from mexchange.book import OrderBook  # noqa: E402
+from mexchange.domain import OrderType, Side, TimeInForce  # noqa: E402
+from mexchange.ledger import AccountKind, Ledger, fmt  # noqa: E402
+from mexchange.venue import Venue  # noqa: E402
 
 SCENARIO_DIR = _HERE / "scenarios"
 
@@ -97,7 +97,9 @@ class Simulation:
         for account_id, assets in self.spec.get("accounts", {}).items():
             self.ledger.create_account(account_id, AccountKind.USER, account_id)
             for asset, amount in assets.items():
-                self.accounts.deposit(account_id, asset, Decimal(str(amount)), self.clock)
+                self.accounts.deposit(
+                    account_id, asset, Decimal(str(amount)), self.clock
+                )
                 self.clock += 1
 
     # ------------------------------------------------------------------ 执行
@@ -154,7 +156,9 @@ class Simulation:
             )
         except (InsufficientFunds, ValueError) as exc:
             self.step += 1
-            self.lines.append(f"[{self.step:>3}] {'accounts':<{ACTOR_WIDTH}} ❌ 拒绝：{exc}")
+            self.lines.append(
+                f"[{self.step:>3}] {'accounts':<{ACTOR_WIDTH}} ❌ 拒绝：{exc}"
+            )
             return
 
         if order is not None and step.get("as"):
@@ -165,7 +169,9 @@ class Simulation:
         order_id = self.labels.get(ref, ref) if ref else None
         if order_id is None:
             self.step += 1
-            self.lines.append(f"[{self.step:>3}] {'engine':<{ACTOR_WIDTH}} ❌ 撤单缺少 order 引用")
+            self.lines.append(
+                f"[{self.step:>3}] {'engine':<{ACTOR_WIDTH}} ❌ 撤单缺少 order 引用"
+            )
             return
         self.venue.cancel_order(order_id, self.clock)
 
@@ -181,7 +187,9 @@ class Simulation:
         for account_id, account in sorted(self.ledger.accounts.items()):
             balances = {
                 asset: amount
-                for asset, amount in self.ledger.all_balances().get(account_id, {}).items()
+                for asset, amount in self.ledger.all_balances()
+                .get(account_id, {})
+                .items()
             }
             if not balances:
                 continue
@@ -190,10 +198,14 @@ class Simulation:
                 for asset in balances
                 if self.accounts.reserved_amount(account_id, asset) > 0
             }
-            text = "  ".join(f"{asset}={fmt(amount)}" for asset, amount in sorted(balances.items()))
+            text = "  ".join(
+                f"{asset}={fmt(amount)}" for asset, amount in sorted(balances.items())
+            )
             extra = ""
             if reserved:
-                extra = "   冻结: " + "  ".join(f"{a}={fmt(v)}" for a, v in reserved.items())
+                extra = "   冻结: " + "  ".join(
+                    f"{a}={fmt(v)}" for a, v in reserved.items()
+                )
             self.lines.append(f"    {account.label:<12} {text}{extra}")
 
         self._section("最近账本分录")
