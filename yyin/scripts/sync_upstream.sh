@@ -61,6 +61,22 @@ cd "$REPO_ROOT" || exit 2
 log() { printf '[sync] %s\n' "$1"; }
 err() { printf '[sync] 错误：%s\n' "$1" >&2; }
 
+# 同步过程中会 checkout 到目标分支。退出时（成功或失败）切回用户原来的分支，
+# 否则定时任务会在用户不知情时把工作副本留在 master 上。
+original_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')"
+restore_branch() {
+  local now
+  now="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')"
+  if [ -n "${original_branch:-}" ] && [ "$original_branch" != "$BRANCH" ] && [ "$now" = "$BRANCH" ]; then
+    if git checkout "$original_branch" >/dev/null 2>&1; then
+      log "已切回 $original_branch"
+    else
+      err "无法切回 $original_branch，请手动切换"
+    fi
+  fi
+}
+trap restore_branch EXIT
+
 # --- 1. 工作区必须干净：避免把未提交的改动卷进合并 -------------------------
 if [ -n "$(git status --porcelain)" ]; then
   err "工作区有未提交的改动，先处理掉再同步（定时任务不应在有改动时运行）"
@@ -82,9 +98,8 @@ if ! git rev-parse --verify "$UPSTREAM_REF" >/dev/null 2>&1; then
 fi
 
 # --- 3. 切到目标分支 -------------------------------------------------------
-current_branch="$(git rev-parse --abbrev-ref HEAD)"
-if [ "$current_branch" != "$BRANCH" ]; then
-  log "切换分支：$current_branch -> $BRANCH"
+if [ "$original_branch" != "$BRANCH" ]; then
+  log "切换分支：$original_branch -> $BRANCH"
   if ! git checkout "$BRANCH"; then
     err "切换到 $BRANCH 失败"
     exit 1

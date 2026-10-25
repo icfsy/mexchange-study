@@ -66,6 +66,9 @@ Forgejo: Mirror Repository upstream/mExchange is read-only
 
 ### 2. 给本地克隆配置三个 remote
 
+> 先跑 `git remote -v`：如果已经能看到 `origin`（指向 `yyin/mExchange`）和 `upstream`
+> （指向 `upstream/mExchange`），说明配置已完成，直接跳到第 3 步。
+
 ```bash
 cd ~/dev/forgejo/mExchange
 
@@ -73,7 +76,7 @@ cd ~/dev/forgejo/mExchange
 git remote rename origin upstream
 
 # 你自己的仓库 = 新的 origin（可写）
-git remote add origin git@forgejo.home.yyinlab.dev:yyin/mExchange.git
+git remote add origin ssh://git@forgejo.home.yyinlab.dev:2222/yyin/mExchange.git
 
 # 公开成果仓库保持不变（如果还没有）
 git remote add github git@github.com:icfsy/mexchange-study.git
@@ -260,6 +263,8 @@ yyin/scripts/sync_upstream.sh --dry-run    # 只看会发生什么
 - `--ff-only` 但 master 有自己的提交 → 拒绝，并提示改用 `--merge`
 - `--merge` 冲突 → **自动 `merge --abort`**，本地和远程都保持原样
 - 已经是最新 → 退出码 0（幂等，适合定时任务）
+- **退出时切回你原来的分支**（成功或失败都会），所以可以放心在正在用的工作副本里运行，
+  不会把你留在 master 上
 - 从不使用 `--force`
 
 ## 冲突处理
