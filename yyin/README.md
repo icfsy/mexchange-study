@@ -7,7 +7,7 @@
 |---|---|
 | [`docs/`](docs) | 架构导读（英文 + 中文）、交易所业务知识笔记、v2 目标架构设计 |
 | [`mexchange_py/`](mexchange_py) | Python 业务逻辑参考模型：7 个可执行场景 + 19 个测试 |
-| [`scripts/`](scripts) | 推送前自检脚本 |
+| [`scripts/`](scripts) | 推送前自检、上游同步脚本 |
 
 ## docs/
 
@@ -16,6 +16,7 @@
 | [`ARCHITECTURE_GUIDE.md`](docs/ARCHITECTURE_GUIDE.md) / [`ARCHITECTURE_GUIDE.zh-CN.md`](docs/ARCHITECTURE_GUIDE.zh-CN.md) | 现有架构与代码的导读（英文 / 中文），含逐条核查过的结论与五条端到端链路 |
 | [`EXCHANGE_DOMAIN_NOTES.md`](docs/EXCHANGE_DOMAIN_NOTES.md) | 行业业务知识：撮合与分配算法、订单类型与 TIF、自成交防护、金额精度与记账、可审计与合规、交易前风控、行情与订单流的通道分离、FIX、清算与结算 |
 | [`ARCHITECTURE_V2.md`](docs/ARCHITECTURE_V2.md) | 面向生产的目标架构：事件日志、风控网关、FIX 网关、异步结算、行情缺口恢复；含 SQL 草图、时序、故障语义与六阶段迁移路线 |
+| [`FORGEJO_WORKFLOW.md`](docs/FORGEJO_WORKFLOW.md) | 仓库拓扑：上游镜像只读 + 自己的可写仓库 + `master` 自动跟随上游；含 ff-only/merge 取舍与四种定时方案 |
 
 ## meexchange_py/
 
@@ -37,7 +38,6 @@ python3 -m unittest discover -s tests -v              # 19 个测试
 yyin/scripts/verify_repo.sh              # 全部检查
 yyin/scripts/verify_repo.sh --offline    # 跳过 remote 连通性检查
 ```
-
 检查项：
 
 1. **已提交内容 == 工作区内容**（逐字节）——本项目真实踩过的坑：提交进去的是过期版本
@@ -63,3 +63,18 @@ yyin/scripts/verify_repo.sh --offline    # 跳过 remote 连通性检查
 名称对照和模式扫描，不依赖代码里的任何判断。
 
 脚本本身也做过反向测试：故意注入 `meexchange` 拼写后，三项检查同时报错、退出码 1；还原后恢复通过。
+
+## scripts/sync_upstream.sh
+
+把上游的 `master` 同步到自己的仓库（定时可跑，失败时什么都不改）：
+
+```bash
+yyin/scripts/sync_upstream.sh                 # ff-only：要求 master 与上游完全一致
+yyin/scripts/sync_upstream.sh --merge         # master 含自己的合并时用这个
+yyin/scripts/sync_upstream.sh --dry-run       # 只看会发生什么
+```
+
+安全保证：工作区不干净会拒绝；冲突会自动 `merge --abort`；从不使用 `--force`。
+
+完整的仓库拓扑与定时方案（cron / launchd / systemd / Forgejo Actions）见
+[`docs/FORGEJO_WORKFLOW.md`](docs/FORGEJO_WORKFLOW.md)。
