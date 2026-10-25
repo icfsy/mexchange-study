@@ -38,6 +38,7 @@ python3 -m unittest discover -s tests -v              # 19 个测试
 yyin/scripts/verify_repo.sh              # 全部检查
 yyin/scripts/verify_repo.sh --offline    # 跳过 remote 连通性检查
 ```
+
 检查项：
 
 1. **已提交内容 == 工作区内容**（逐字节）——本项目真实踩过的坑：提交进去的是过期版本
